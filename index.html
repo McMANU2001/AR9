@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Juana Azurduy de Padilla</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #fullscreen-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        :fullscreen #fullscreen-btn {
+            display: block !important;
+        }
+        :-webkit-full-screen #fullscreen-btn {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <a-scene 
+        embedded 
+        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+        vr-mode-ui="enabled: false"
+        renderer="antialias: true; colorManagement: true; sortObjects: true;"
+        device-orientation-permission-ui="enabled: false"
+        id="ar-scene">
+        
+        <a-assets>
+            <audio id="sound" src="juana.mp3" preload="auto"></audio>
+        </a-assets>
+
+        <a-marker type="pattern" url="juana.patt">
+            <!-- Agrupación para bloquear rotación -->
+            <a-entity 
+                id="model"
+                gltf-model="url(juana.gltf)" 
+                scale="0.8 0.8 0.8"  
+                position="0 0 0"
+                rotation="-100 0 0"
+                animation-mixer
+                shadow="receive: true; cast: true"
+                look-controls="enabled: false">
+            </a-entity>
+
+            <a-image 
+                id="image1"
+                src="juanaFoto.jpg"
+                position="-2.3 0 -2" 
+                rotation="-100 0 0"
+                width="2.5"
+                height="2.6"
+                look-controls="enabled: false">
+            </a-image>
+
+            <a-image 
+                id="image2" 
+                src="textoJuana.png"
+                position="2.3 0 -2" 
+                rotation="-100 0 0"
+                width="2.5"
+                height="2.6"
+                look-controls="enabled: false">
+            </a-image>
+
+            <a-entity sound="src: #sound"></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <button id="fullscreen-btn">Pantalla Completa</button>
+
+    <script>
+        const marker = document.querySelector('a-marker');
+        const model = document.getElementById('model');
+        const image1 = document.getElementById('image1');
+        const image2 = document.getElementById('image2');
+        const sound = document.querySelector('[sound]');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        marker.addEventListener('markerFound', () => {
+            console.log('Marcador encontrado');
+            model.setAttribute('animation-mixer', 'timeScale: 1');
+            sound.components.sound.playSound();
+        });
+
+        marker.addEventListener('markerLost', () => {
+            console.log('Marcador perdido');
+            model.setAttribute('animation-mixer', 'timeScale: 0');
+            sound.components.sound.pauseSound();
+        });
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.msFullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        fullscreenBtn.addEventListener('click', toggleFullScreen);
+
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+        function updateFullscreenButton() {
+            if (document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement) {
+                fullscreenBtn.textContent = 'Salir de Pantalla Completa';
+            } else {
+                fullscreenBtn.textContent = 'Pantalla Completa';
+            }
+        }
+    </script>
+</body>
+</html>
