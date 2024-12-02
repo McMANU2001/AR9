@@ -44,11 +44,10 @@
         </a-assets>
 
         <a-marker type="pattern" url="pattern-juana.patt">
-            <!-- Agrupación para bloquear rotación -->
             <a-entity 
                 id="model"
                 gltf-model="url(juanaV4.glb)" 
-                scale="4.5 4.5 4.5"  
+                scale="2.8 2.8 2.8"  
                 position="0 0 0"
                 rotation="-100 0 0"
                 animation-mixer
@@ -76,7 +75,7 @@
                 look-controls="enabled: false">
             </a-image>
 
-            <a-entity sound="src: #sound"></a-entity>
+            <a-entity sound="src: #sound; positional: false; maxDistance: 0; rolloffFactor: 0;"></a-entity>
         </a-marker>
 
         <a-entity camera></a-entity>
